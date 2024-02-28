@@ -6,8 +6,8 @@ Wij gaan bezig met code voor een vliegtuigvleugel. Dit voor het project stroming
 
 Collaborators:
 
-Pieter Haas 
-Sven Kruise
-Pieter Haas
-Yasmine
+Pieter Haas, 
+Sven Kruise,
+Pieter Haas,
+Yasmine,
 Marjolein
