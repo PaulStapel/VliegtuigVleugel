@@ -18,7 +18,7 @@ def joukowski(center, R ,points):
     
 joukowski(complex(-0.1, 0.22), 1.12, 1000)
     
-    
+
     
     
     

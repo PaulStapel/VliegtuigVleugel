@@ -127,6 +127,8 @@ class VectorField2D():
         plt.ylim(min(ytraj)*0.9, max(ytraj)*1.1)
         plt.show()
 
-    def fun():
-        print('Yay')
-        
+    def fun(self):
+        print('Yay!')
+
+
+
