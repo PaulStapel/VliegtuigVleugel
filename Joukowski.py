@@ -17,8 +17,9 @@ def joukowski(center, R ,points):
     plt.plot(x,y)
     
 joukowski(complex(-0.1, 0.22), 1.12, 1000)
-    
 
-    
+
+
+
     
     
