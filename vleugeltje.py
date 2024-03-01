@@ -30,3 +30,4 @@ def complex_potential(gamma, mu, z):
     """
     return z - 1j*gamma*np.log(z)/(2*np.pi) + mu/(2*np.pi*z)
 
+#comment
