@@ -14,10 +14,11 @@ def joukowski(center, R ,points):
         x[i] = jk.real
         y[i] = jk.imag
 
-
+    plt.xlim(-2.1,2.1)
+    plt.ylim(-2.1,2.1)
     plt.plot(x,y)
     
-joukowski(complex(0.5,0.5), 1, 1000)
+joukowski(complex(0.1, 0.40), 1, 1000)
     
     
     
