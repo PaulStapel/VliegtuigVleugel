@@ -3,35 +3,32 @@ import matplotlib.pyplot as plt
 
 
 
-
-x0, y0 = complex(0.1,0.4)
-def joukowski(center, R ,points):
+def circle(center, R, points):
     theta = np.linspace(0, 2*np.pi, points)
-    x , y = np.zeros(points),  np.zeros(points)
-    
+    circle = np.zeros(points, dtype = np.complex_)
+   
     for i in range(points):
-        circle = R* complex(np.cos(theta[i]), np.sin(theta[i])) + center
-        jk =  circle #+1/circle 
-        x[i] = jk.real
-        y[i] = jk.imag
+        circle[i] = R* complex(np.cos(theta[i]), np.sin(theta[i])) + center
+    return circle
+
+
+
+def joukowski(circle):
+    jk = np.zeros(len(circle), dtype = np.complex_)
+    
+    for i in range(len(circle)):
+
+        jk[i] =  circle[i] + 1/circle[i] 
+
 
     plt.xlim(-2.1,2.1)
     plt.ylim(-2.1,2.1)
-    plt.plot(x,y)
-    return np.array([x,y])
+    plt.plot(jk.real,jk.imag)
     
-b = joukowski(complex(0.1, 0.40), 1, 1000)
+    return jk
 
-j = 500
-k = 500 
-matrix = np.zeros((j,k,2))
+a = (circle(complex(-0.1,0.22), 1.12, 1000))
+# plt.plot(a.real, a.imag)
 
-def psi(x,y):
-    
-    R = np.sqrt((x - x0)**2 + (y-y0)**2)
-    Theta = np.arccos((x - x0)/R)
-    
-    psi = (R-(Theta/R)**2)*np.sin(Theta)
-    return np.array(psi)
-    
-    
+# print(len(a))
+joukowski(a)
