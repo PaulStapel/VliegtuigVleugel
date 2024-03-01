@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from Joukowski import joukowski
+from scipy.interpolate import griddata
+from matplotlib import cm
 
 def gridpoints(R0, Rmax, Nr, Ngamma):
     """
@@ -15,19 +17,38 @@ def gridpoints(R0, Rmax, Nr, Ngamma):
     gamma = np.linspace(0, 2*np.pi, Ngamma) #array for angles
     R = np.linspace(R0, Rmax, Nr) #array for radii
     rr, gg = np.meshgrid(R,gamma) #combine
-    points = rr*(np.cos(gg) - 1j*np.sin(gg)) 
+    points = rr*(np.cos(gg) + 1j*np.sin(gg)) 
+    print(points)
     return points.ravel() #flatten your output into a 1D array. 
 
 # TEST. Moet een array geven met stralen voor alle 4 de hoeken. 
 # print(gridpoints(0, 1, 2, 4))
 
-def complex_potential(gamma, mu, z):
+def complex_potential(gamma, z):
     """
     Calculate complex potential for U = 1. 
     gamma = vorticity
     mu = viscocity
     z = complex coordinate. 
     """
-    return z - 1j*gamma*np.log(z)/(2*np.pi) + mu/(2*np.pi*z)
+    mu = - 2*np.pi*(np.sqrt(z.real**2 + z.imag**2))
+    return z - 1j*gamma*np.log(z)/(2*np.pi) - mu/(2*np.pi*z)
 
-#comment
+
+def plot_stream_function(points, gamma):
+    x = points.real
+    y = points.imag
+
+    potential = complex_potential(gamma, points)
+    streamfunction = potential.imag
+
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1) 
+    ax.tricontourf(x, y, streamfunction)
+
+    plt.show()
+
+grid = gridpoints(1.22,2, 100, 100) + 0.1 - 0.22j #correction for center of circle
+plot_stream_function(grid, -3)
+    
+
