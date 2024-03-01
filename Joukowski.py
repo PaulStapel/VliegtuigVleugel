@@ -4,9 +4,7 @@ import matplotlib.pyplot as plt
 
 def joukowski(center, R ,points):
     theta = np.linspace(0, 2*np.pi, points)
-    
-    x = np.zeros(points)
-    y = np.zeros(points)
+    x , y = np.zeros(points),  np.zeros(points)
     
     for i in range(points):
         circle = R* complex(np.cos(theta[i]), np.sin(theta[i])) + center
