@@ -32,20 +32,21 @@ def complex_potential(gamma, z):
 
 
 g = gridpoints(1.12, 2, 250, 250) 
+q = g.real*1j + g.imag ### Switch de real en imaginary waardes omdat ze op een of andere manier verkeerd om staan?
 
-
-clist = np.zeros(len(g))
+clist = np.zeros(len(g)) ### Genereer een lijst die gevuld gaat worden met waardes van de complexe potential voor coordinaten
 for i in range(len(g)): 
-    clist[i] = complex_potential(-3, g[i])
+    clist[i] = complex_potential(-3, g[i]) 
 
-# print(g[0])
 
-a = Joukowski.circle(complex(0,0), 1.12, 100)
- 
+a = Joukowski.circle(complex(0,0), 1.12, 100)  ### Cirkel
+
+# qlist = Joukowski.joukowski(q)
+
 
 # Plotting scalar field with tricontour
-plt.tricontourf(g.imag -0.1, g.real +0.22, clist)
-plt.plot(a.real - 0.1, a.imag + 0.22)
+plt.tricontourf(q.real -0.1, q.imag +0.22, clist) ### Plotting the complex potential
+plt.plot(a.real - 0.1, a.imag + 0.22) ### Plotting the circle
 plt.title('Scalar Field')
   
 # # Show plot with gird
