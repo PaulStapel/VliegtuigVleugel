@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-
 def circle(center, R, points):
     theta = np.linspace(0, 2*np.pi, points)
     circle = np.zeros(points, dtype = np.complex_)
@@ -28,7 +27,7 @@ def joukowski(circle):
     return jk
 
 a = (circle(complex(-0.1,0.22), 1.12, 1000))
+
 # plt.plot(a.real, a.imag)
 
-# print(len(a))
 joukowski(a)
