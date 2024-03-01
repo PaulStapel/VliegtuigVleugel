@@ -23,6 +23,7 @@ def joukowski(circle):
 
     plt.xlim(-2.1,2.1)
     plt.ylim(-2.1,2.1)
+
     plt.plot(jk.real,jk.imag)
     
     return jk
