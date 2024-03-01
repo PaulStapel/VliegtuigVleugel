@@ -3,6 +3,15 @@ import matplotlib.pyplot as plt
 from Joukowski import joukowski
 
 def gridpoints(R0, Rmax, Nr, Ngamma):
+    """
+    Takes:
+    R0: minimal radius
+    Rmax: maximum radius
+    Nr: amount of radius points to take
+    Ngamma: amount of angles to take.
+
+    Returns nested array, each array is an angle and contains all radii. 
+    """
     gamma = np.linspace(0, 2*np.pi, Ngamma)
     R = np.linspace(R0, Rmax, Nr)
     rr, gg = np.meshgrid(R,gamma)
