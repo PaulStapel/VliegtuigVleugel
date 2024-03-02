@@ -27,8 +27,8 @@ def joukowski(circle):
     
     return jk
 
-a = (circle(complex(-0.1,0.22), 1.12, 1000))
+# a = (circle(complex(-0.1,0.22), 1.12, 1000))
 
-# plt.plot(a.real, a.imag)
+# # plt.plot(a.real, a.imag)
 
-joukowski(a)
+# joukowski(a)

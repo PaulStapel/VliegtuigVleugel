@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from Joukowski import joukowski
+import Joukowski
 from scipy.interpolate import griddata
 from matplotlib import cm
 
@@ -18,7 +18,6 @@ def gridpoints(R0, Rmax, Nr, Ngamma):
     R = np.linspace(R0, Rmax, Nr) #array for radii
     rr, gg = np.meshgrid(R,gamma) #combine
     points = rr*(np.cos(gg) + 1j*np.sin(gg)) 
-    print(points)
     return points.ravel() #flatten your output into a 1D array. 
 
 # TEST. Moet een array geven met stralen voor alle 4 de hoeken. 
@@ -42,13 +41,17 @@ def plot_stream_function(points, gamma):
     potential = complex_potential(gamma, points)
     streamfunction = potential.imag
 
-    fig = plt.figure()
-    ax = fig.add_subplot(1, 1, 1) 
-    ax.tricontourf(x, y, streamfunction)
-
+    figure, axes = plt.subplots() 
+    cc = plt.Circle(( -0.1 , 0.22 ), 1.22 ,color='black') 
+ 
+    axes.set_aspect( 1 ) 
+    axes.add_artist( cc ) 
+    axes.tricontour(x, y, streamfunction)
+    # plt.scatter(-0.1,0.22) #plotting the middle of the circle
     plt.show()
 
-grid = gridpoints(1.22,2, 100, 100) + 0.1 - 0.22j #correction for center of circle
-plot_stream_function(grid, -3)
-    
+grid = gridpoints(1.12,2, 500, 500) - 0.1 + 0.22j #correction for center of circle
+plot_stream_function(grid, 0)
+
+ 
 
