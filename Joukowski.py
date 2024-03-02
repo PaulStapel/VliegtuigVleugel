@@ -2,24 +2,33 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def joukowski(center, R ,points):
+def circle(center, R, points):
     theta = np.linspace(0, 2*np.pi, points)
-    x , y = np.zeros(points),  np.zeros(points)
-    
+    circle = np.zeros(points, dtype = np.complex_)
+   
     for i in range(points):
-        circle = R* complex(np.cos(theta[i]), np.sin(theta[i])) + center
-        jk =  1/circle + circle
-        x[i] = jk.real
-        y[i] = jk.imag
+        circle[i] = R* complex(np.cos(theta[i]), np.sin(theta[i])) + center
+    return circle
+
+
+
+def joukowski(circle):
+    jk = np.zeros(len(circle), dtype = np.complex_)
+    
+    for i in range(len(circle)):
+
+        jk[i] =  circle[i] + 1/circle[i] 
+
 
     plt.xlim(-2.1,2.1)
     plt.ylim(-2.1,2.1)
-    plt.plot(x,y)
+
+    # plt.plot(jk.real,jk.imag)
     
-joukowski(complex(-0.1, 0.22), 1.12, 1000)
+    return jk
 
+a = (circle(complex(-0.1,0.22), 1.12, 1000))
 
+# plt.plot(a.real, a.imag)
 
-
-    
-    
+joukowski(a)
