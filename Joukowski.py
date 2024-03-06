@@ -20,10 +20,10 @@ def joukowski(circle):
         jk[i] =  circle[i] + 1/circle[i] 
 
 
-    plt.xlim(-2.1,2.1)
-    plt.ylim(-2.1,2.1)
+    #plt.xlim(-2.1,2.1)
+    #plt.ylim(-2.1,2.1)
 
-    # plt.plot(jk.real,jk.imag)
+    #plt.plot(jk.real,jk.imag)
     
     return jk
 
