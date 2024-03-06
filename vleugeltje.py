@@ -42,15 +42,15 @@ def plot_stream_function(points, gamma):
     streamfunction = potential.imag
 
     figure, axes = plt.subplots() 
-    cc = plt.Circle(( -0.1 , 0.22 ), 1.22 ,color='black') 
+    cc = plt.Circle(( 0,0 ), 1.22 ,color='black') 
  
     axes.set_aspect( 1 ) 
     axes.add_artist( cc ) 
-    axes.tricontour(x, y, streamfunction)
+    axes.tricontour(x, y, streamfunction, levels=20)
     # plt.scatter(-0.1,0.22) #plotting the middle of the circle
     plt.show()
 
-grid = gridpoints(1.12,2, 500, 500) - 0.1 + 0.22j #correction for center of circle
+grid = gridpoints(1.12,2, 50, 50) #- 0.1 + 0.22j #correction for center of circle
 plot_stream_function(grid, 0)
 
  
