@@ -16,13 +16,10 @@ def joukowski(circle):
     jk = np.zeros(len(circle), dtype = np.complex_)
     
     for i in range(len(circle)):
-
         jk[i] =  circle[i] + 1/circle[i] 
 
-
-    plt.xlim(-2.1,2.1)
-    plt.ylim(-2.1,2.1)
-
+    # plt.xlim(-2.1,2.1)
+    # plt.ylim(-2.1,2.1)
     # plt.plot(jk.real,jk.imag)
     
     return jk
