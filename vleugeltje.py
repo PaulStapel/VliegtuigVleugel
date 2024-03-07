@@ -40,6 +40,23 @@ def complex_potential(gamma, z, alpha):
 
     return (z*alpha1 + 1.12**2*alpha2/z) - 1j*gamma/(2*np.pi)*np.log(z) #for formula see reader
 
+def zoomplotje(joukowski_wing, x,y,z):
+    xmax_wing,xmin_wing = max(joukowski_wing.real), min(joukowski_wing.real)
+    ymax_wing,ymin_wing = max(joukowski_wing.imag), min(joukowski_wing.imag)
+    
+    xl,yl = (xmax_wing - xmin_wing), (ymax_wing - ymin_wing)
+
+    max_index = np.argmax(joukowski_wing.real)
+    ypoint = joukowski_wing.imag[max_index]
+    D
+    xmax,xmin = xmax_wing + 0.1*xl, xmax_wing - 0.1*xl
+    ymax,ymin = ypoint + 0.1*yl,  ypoint - 0.1*yl
+    
+    plt.plot()
+    plt.tricontour(x,y,z)
+    plt.plot(joukowski_wing.real,joukowski_wing.imag, color='black')
+    plt.axis([xmin,xmax,ymin,ymax])
+    plt.show()
 
 def extract_streamfunction(x0, y0, radius, gamma, alpha):
     circle = Joukowski.circle(complex(x0,y0), radius, 1000) #Create a circle
@@ -67,14 +84,17 @@ def extract_streamfunction(x0, y0, radius, gamma, alpha):
     plt.plot(wing.real, wing.imag, color='black')
     plt.show()
 
+    #Plot zoom-in
+    zoomplotje(wing, x_trans, y_trans, streamfunction)
+
     return z, streams, z_trans, trans_streams
 
 
 x0 = -0.1
 y0 = 0.22
 radius = 1.12 
-gamma = -1
-alpha = deg2rad(0) #degrees
+gamma = -4
+alpha = deg2rad(20) #degrees
 
 z, streams, z_trans, trans_streams = extract_streamfunction(x0, y0, radius, gamma, alpha)
 
