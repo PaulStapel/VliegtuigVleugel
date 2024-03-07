@@ -5,7 +5,7 @@ import Joukowski
 from matplotlib import cm
 
 def deg2rad(deg):
-    return deg*np.pi/180
+    return deg*np.pi/180 
 
 def gridpoints(R0, Rmax, Nr, Ngamma):
     """
@@ -20,95 +20,63 @@ def gridpoints(R0, Rmax, Nr, Ngamma):
     gamma = np.linspace(0, 2*np.pi, Ngamma) #array for angles
     R = np.linspace(R0, Rmax, Nr) #array for radii
     rr, gg = np.meshgrid(R,gamma) #combine
-    points = rr*(np.cos(gg) + 1j*np.sin(gg)) 
+    points = rr*(np.cos(gg) + 1j*np.sin(gg)) #Transform to cartesian coordinates
     return points.ravel()
 
 def complex_centering(x0,y0,points):
-    return points + x0 + 1j*y0 
+    return points + x0 + 1j*y0 #center the points to analyse
 
 def complex_potential(gamma, z, alpha):
     """
     Calculate complex potential for U = 1. 
-    gamma = vorticity
-    mu = viscocity
+    1st term: parallel flow
+    2nd term: dipole
+    3rd term: vortex with vorticity gamma
     z = complex coordinate. 
     """
-    alpha1 = np.cos(alpha) - 1j*np.sin(alpha)
-    alpha2 = np.cos(alpha) + 1j*np.sin(alpha)
-    return (z*alpha1 + 1.12**2*alpha2/z) - 1j*gamma/(2*np.pi)*np.log(z)
+    #Correct for angle of attack with terms as stated in the excercise
+    alpha1 = np.cos(alpha) - 1j*np.sin(alpha) #first angle term
+    alpha2 = np.cos(alpha) + 1j*np.sin(alpha) #second angle term
 
-def plot_stream_function(points, gamma):
-    x = points.real - 0.1
-    y = points.imag + 0.22
-
-    potential = complex_potential(gamma, points, alpha)
-    streamfunction = potential.imag
-
-    figure, axes = plt.subplots() 
-    cc = plt.Circle(( -0.1, 0.22 ), 1.12 ,color='black') 
- 
-    axes.set_aspect( 1 ) 
-    axes.add_artist( cc ) 
-    axes.tricontour(x, y, streamfunction, levels=20)
-    plt.scatter(-0.1,0.22) #plotting the middle of the circle
-    plt.show()
-    return potential
+    return (z*alpha1 + 1.12**2*alpha2/z) - 1j*gamma/(2*np.pi)*np.log(z) #for formula see reader
 
 
-def alternate_flowlines(gamma, alpha=0):
-    circle = Joukowski.circle(complex(-0.1,+0.22), Radius, 100) 
-    wing = Joukowski.joukowski(circle)
+def extract_streamfunction(x0, y0, radius, gamma, alpha):
+    circle = Joukowski.circle(complex(x0,y0), radius, 1000) #Create a circle
+    wing = Joukowski.joukowski(circle) #Create a wing by transforming the circle
 
-    X = np.arange(-3, 3, 0.05) 
-    Y = np.arange(-3, 3, 0.05)
-    x,y = np.meshgrid(X, Y)
+    grid = gridpoints(radius, 3*radius, 200, 100) # Take gridpoints to consider
+    potential = complex_potential(gamma, grid, alpha) # Calculate potential for all points
+    streamfunction = potential.imag # Straemfunction is imaginary term of potential 
 
-    z = x+1j*y
-    mask = np.absolute(z - (-0.1 + 0.22j)) >= Radius
-    #z -= -0.1 + 0.22j 
-    z = z[mask]
-    x,y = x[mask], y[mask]
+    z = complex_centering(x0,y0, grid) #Center the x and y-axis to the cylinder. 
+    x,y = z.real, z.imag 
 
-    w = Joukowski.joukowski(z)
+    z_trans = Joukowski.joukowski(z) #transform coordinates
+    x_trans,y_trans = z_trans.real, z_trans.imag
 
-    pot = complex_potential(gamma, z, alpha)
-    stream = pot.imag
-
-    plt.tricontour(x, y, stream, levels=20, color='blue')
-    # Plot the circle and the transformed wing
-    plt.plot(circle.real, circle.imag, label='Circle')
-    plt.scatter(-0.1,0.22) #plotting the middle of the circle
+    # Plot cylinder streamfunction
     
-    # Show the plot
-    plt.legend()
-    plt.axis('equal')
+    streams = plt.tricontour(x, y, streamfunction, levels=20, color='black')
+    plt.plot(circle.real, circle.imag, color='black')
+    plt.scatter(x0, y0) #plotting the middle of the circle
     plt.show()
 
-    plt.tricontour(w.real, w.imag, stream, levels=20)
-    plt.plot(wing.real, wing.imag, label='Joukowski Wing')
+    # Plot wing streamfunction
+    trans_streams = plt.tricontour(x_trans,y_trans, streamfunction, levels=20) #bug
+    plt.plot(wing.real, wing.imag, color='black')
     plt.show()
 
+    return z, streams, z_trans, trans_streams
 
 
-alpha = deg2rad(-10) #angle of attack.
-radius = 1.12
+x0 = -0.1
+y0 = 0.22
+radius = 1.12 
+gamma = -1
+alpha = deg2rad(0) #degrees
 
-
-grid = gridpoints(1.12 ,2.5, 200, 100) #Generate gridpoints
-
-potential = plot_stream_function(grid, -2)
-
-grid = complex_centering(-0.1,0.22, grid) 
-
-circle = Joukowski.circle(complex(-0.1,0.22), 1.12, 1000) 
-wing = Joukowski.joukowski(circle)
-grid_trans = Joukowski.joukowski(grid)
-
-x,y = grid_trans.real, grid_trans.imag
-
-plt.tricontour(x,y, potential.imag, levels=20) #bug
-plt.plot(wing.real, wing.imag, color='black')
-plt.show()
+z, streams, z_trans, trans_streams = extract_streamfunction(x0, y0, radius, gamma, alpha)
 
 
 
