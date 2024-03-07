@@ -13,11 +13,7 @@ def circle(center, R, points):
 
 
 def joukowski(circle):
-    jk = np.zeros(len(circle), dtype = np.complex_)
-    
-    for i in range(len(circle)):
-
-        jk[i] =  circle[i] + 1/circle[i] 
+    return circle+ 1/circle
 
 
     #plt.xlim(-2.1,2.1)
