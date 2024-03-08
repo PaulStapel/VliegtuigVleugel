@@ -107,11 +107,33 @@ def pressure_field(x0, y0, radius, gamma, alpha):
     
     for i in range(len(new_z)):
         speed[i] = (potential[i] - potential[i + 1])/(z[i] - z[i + 1])
+        speed[i] = np.conj( speed[i])
+        
     
-    plt.plot()
+    circle = Joukowski.circle(complex(x0,y0), radius, 1000)
+    plt.figure()
     u,v = speed.real, speed.imag
+    plt.plot(circle.real, circle.imag, color='black')
     plt.quiver(x,y,u,v)
     plt.show()
+    
+    
+    new_z = Joukowski.joukowski(new_z) #transform coordinates
+    x,y = new_z.real, new_z.imag 
+    
+    speed = np.zeros(len(new_z), dtype = np.complex_)
+    
+    for i in range(len(new_z)):
+        speed[i] = (potential[i] - potential[i + 1])/(z[i] - z[i + 1])
+        speed[i] = np.conj( speed[i])
+ 
+    
+    plt.figure()
+    u,v = speed.real, speed.imag
+    plt.quiver(x,y,u,v)
+    plt.plot(wing.real, wing.imag, color='black')
+    plt.show()
+    
     # plt.plot()
     # plt.quiver(1,1,1,1)
     # plt.show()
@@ -120,7 +142,7 @@ def pressure_field(x0, y0, radius, gamma, alpha):
 x0 = -0.1
 y0 = 0.22
 radius = 1.12 
-gamma = - np.e
+gamma = -np.e
 alpha = deg2rad(0) #degrees
 
 z, streams, z_trans, trans_streams = extract_streamfunction(x0, y0, radius, gamma, alpha)
@@ -129,4 +151,3 @@ z, streams, z_trans, trans_streams = extract_streamfunction(x0, y0, radius, gamm
 
 pressure_field(x0, y0, radius, gamma, alpha)
  
-
