@@ -95,7 +95,7 @@ def pressure_field(x0, y0, radius, gamma, alpha):
     circle = Joukowski.circle(complex(x0,y0), radius, 1000) #Create a circle
     wing = Joukowski.joukowski(circle) #Create a wing by transforming the circle
 
-    grid = gridpoints(radius, 3*radius, 10, 35) # Take gridpoints to consider
+    grid = gridpoints(radius, 3*radius, 10, 40) # Take gridpoints to consider
     potential = complex_potential(gamma, grid, alpha) # Calculate potential for all points
     streamfunction = potential.imag # Straemfunction is imaginary term of potential 
 
@@ -112,9 +112,7 @@ def pressure_field(x0, y0, radius, gamma, alpha):
     u,v = speed.real, speed.imag
     plt.quiver(x,y,u,v)
     plt.show()
-    # plt.plot()
-    # plt.quiver(1,1,1,1)
-    # plt.show()
+
 
 
 x0 = -0.1
