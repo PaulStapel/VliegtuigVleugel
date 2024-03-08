@@ -3,6 +3,7 @@ import numpy.ma as ma
 import matplotlib.pyplot as plt
 import Joukowski
 from matplotlib import cm
+from scipy import constants as con
 
 def deg2rad(deg):
     return deg*np.pi/180 
@@ -95,36 +96,69 @@ def pressure_field(x0, y0, radius, gamma, alpha):
     circle = Joukowski.circle(complex(x0,y0), radius, 1000) #Create a circle
     wing = Joukowski.joukowski(circle) #Create a wing by transforming the circle
 
-    grid = gridpoints(radius, 3*radius, 10, 40) # Take gridpoints to consider
+    grid = gridpoints(radius, 3*radius, 10, 35) # Take gridpoints to consider
     potential = complex_potential(gamma, grid, alpha) # Calculate potential for all points
-    streamfunction = potential.imag # Straemfunction is imaginary term of potential 
+    
+    H = 1**2/2  + 101325/1225 ### Im leaving the gravitational constant out
+    ### Might add it in later but for now its irrelevant
+    print(H)
+
+
 
     z = complex_centering(x0,y0, grid)#Center the x and y-axis to the cylinder.
-    new_z = z[:-1]
-    x,y = new_z.real, new_z.imag 
+    new_z = z[:-1] ### Making the z list one shorter because you lose 1 point with the approximation method
+    x,y = new_z.real, new_z.imag ### x,y coordinates
     
-    speed = np.zeros(len(new_z), dtype = np.complex_)
+    speed = np.zeros(len(new_z), dtype = np.complex_) ### Empty lists
+    pressure = np.zeros(len(speed), dtype = np.complex_)
     
     for i in range(len(new_z)):
-        speed[i] = (potential[i] - potential[i + 1])/(z[i] - z[i + 1])
-    
-    plt.plot()
-    u,v = speed.real, speed.imag
+        s = (potential[i] - potential[i + 1])/(z[i] - z[i + 1])
+        speed[i] = np.conj( s)
+        pressure[i] = (H - speed[i]**2 )*1225
+        print(pressure[i])
+        
+    circle = Joukowski.circle(complex(x0,y0), radius, 1000)
+    plt.figure()
+    # u,v = speed.real, speed.imag
+    u,v = pressure.real, pressure.imag
+    plt.plot(circle.real, circle.imag, color='black')
     plt.quiver(x,y,u,v)
     plt.show()
+    
+    
+    
+    wz = Joukowski.joukowski(z) #transform coordinates
+    new_wz = wz[: - 1]
+    wx,wy = new_wz.real, new_wz.imag 
+    
+    wspeed = np.zeros(len(new_wz), dtype = np.complex_)
+    wpressure = np.zeros(len(speed), dtype = np.complex_)
+    
+    for i in range(len(new_wz)):
+        ws = (potential[i] - potential[i + 1])/(wz[i] - wz[i + 1])
+        wspeed[i] = np.conj( ws)
+        wpressure[i] = (H  )*1225 - wspeed[i]**2*1225 
+    
+    plt.figure()
+    # wu,wv = wspeed.real, wspeed.imag
+    wu,wv = wpressure.real, wpressure.imag
+    plt.quiver(wx,wy,wu,wv)
+    plt.plot(wing.real, wing.imag, color='black')
+    plt.show()
+    
 
 
 
 x0 = -0.1
 y0 = 0.22
 radius = 1.12 
-gamma = - np.e
+gamma = -np.e
 alpha = deg2rad(0) #degrees
 
-z, streams, z_trans, trans_streams = extract_streamfunction(x0, y0, radius, gamma, alpha)
+# z, streams, z_trans, trans_streams = extract_streamfunction(x0, y0, radius, gamma, alpha)
 
 
 
 pressure_field(x0, y0, radius, gamma, alpha)
  
-
