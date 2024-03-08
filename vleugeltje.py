@@ -48,7 +48,7 @@ def zoomplotje(joukowski_wing, x,y,z):
 
     max_index = np.argmax(joukowski_wing.real)
     ypoint = joukowski_wing.imag[max_index]
-    D
+    
     xmax,xmin = xmax_wing + 0.1*xl, xmax_wing - 0.1*xl
     ymax,ymin = ypoint + 0.1*yl,  ypoint - 0.1*yl
     
