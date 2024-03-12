@@ -154,34 +154,49 @@ def pressure_field(x0, y0, radius, gamma, alpha):
         speed[i] = (potential[i] - potential[i + 1])/(z[i] - z[i + 1])
         speed[i] = np.conj( speed[i])
         pressure[i] = (H - (speed[i].imag**2 + speed[i].real**2)/2)*1225 
-        
+    
+    circle_pressure= np.zeros(1000)
+    e = np.zeros(1000)
+    for i in range (1000):
+        a = abs(grid - circle[i])
+        b = min(a)
+        c = np.where(a == b)[0]
+        d = int(c[0])
+        e[i] = d
+        circle_pressure[i] = pressure[d]
+    
+    dz = np.zeros(1000)
+    dz = e[-1] + e[1]/2
+    Fx_min_Fy_circle = sum(circle_pressure**2 * dz)
+
+    
     plt.figure()
     plt.tricontour(x, y, pressure, levels=5000, color='black')
     plt.plot(circle.real, circle.imag, color='black')
     plt.show()
     
     
-    wz = Joukowski.joukowski(z) #transform coordinates
-    new_wz = wz[: - 1]
-    wx,wy = new_wz.real, new_wz.imag 
+    # wz = Joukowski.joukowski(z) #transform coordinates
+    # new_wz = wz[: - 1]
+    # wx,wy = new_wz.real, new_wz.imag 
     
-    wspeed = np.zeros(len(new_wz), dtype = np.complex_)
-    wpressure = np.zeros(len(speed), dtype = np.complex_)
+    # wspeed = np.zeros(len(new_wz), dtype = np.complex_)
+    # wpressure = np.zeros(len(speed), dtype = np.complex_)
     
-    for i in range(len(new_wz)):
-        ws = (potential[i] - potential[i + 1])/(wz[i] - wz[i + 1])
-        wspeed[i] = np.conj( ws)
-        wpressure[i] = (H - (wspeed[i].imag**2 + wspeed[i].real**2)/2)*1225 
+    # for i in range(len(new_wz)):
+    #     ws = (potential[i] - potential[i + 1])/(wz[i] - wz[i + 1])
+    #     wspeed[i] = np.conj( ws)
+    #     wpressure[i] = (H - (wspeed[i].imag**2 + wspeed[i].real**2)/2)*1225 
     
-    plt.figure()
-    plt.tricontour(wx, wy, wpressure, levels=5000, color='black')
-    plt.plot(wing.real, wing.imag, color='black')
-    plt.show()
+    # plt.figure()
+    # plt.tricontour(wx, wy, wpressure, levels=5000, color='black')
+    # plt.plot(wing.real, wing.imag, color='black')
+    # plt.show()
 
 x0 = -0.1
 y0 = 0.22
 radius = 1.12 
-gamma = -np.e
+gamma = -np.e  ### Makes for a smooth flow at the trailing edge
 alpha = deg2rad(0) #degrees
 
 # z, streams, z_trans, trans_streams = extract_streamfunction(x0, y0, radius, gamma, alpha)
