@@ -162,7 +162,7 @@ def pressure_field(x0, y0, radius, gamma, alpha):
         b = min(a)
         c = np.where(a == b)[0]
         d = int(c[0])
-        e[i] = d
+        e[i] = grid[d]
         circle_pressure[i] = pressure[d]
     
     dz = np.zeros(1000)
