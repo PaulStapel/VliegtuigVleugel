@@ -3,6 +3,7 @@ import numpy.ma as ma
 import matplotlib.pyplot as plt
 import Joukowski
 from matplotlib import cm
+from scipy import constants as con
 
 def deg2rad(deg):
     return deg*np.pi/180 
@@ -53,7 +54,8 @@ def zoomplotje(joukowski_wing, x,y,z):
     ymax,ymin = ypoint + 0.1*yl,  ypoint - 0.1*yl
     
     plt.plot()
-    plt.tricontour(x,y,z)
+    plt.tricontour(x,y,z, levels = 240) ### Added more levels so you can see the streamfunction
+    ### in the zoomplot as well
     plt.plot(joukowski_wing.real,joukowski_wing.imag, color='black')
     plt.axis([xmin,xmax,ymin,ymax])
     plt.show()
@@ -66,8 +68,9 @@ def extract_streamfunction(x0, y0, radius, gamma, alpha):
     potential = complex_potential(gamma, grid, alpha) # Calculate potential for all points
     streamfunction = potential.imag # Straemfunction is imaginary term of potential 
 
-    z = complex_centering(x0,y0, grid) #Center the x and y-axis to the cylinder. 
+    z = complex_centering(x0,y0, grid)#Center the x and y-axis to the cylinder. 
     x,y = z.real, z.imag 
+
 
     z_trans = Joukowski.joukowski(z) #transform coordinates
     x_trans,y_trans = z_trans.real, z_trans.imag
@@ -89,17 +92,143 @@ def extract_streamfunction(x0, y0, radius, gamma, alpha):
 
     return z, streams, z_trans, trans_streams
 
+def vel_field(x0, y0, radius, gamma, alpha):
+    circle = Joukowski.circle(complex(x0,y0), radius, 1000) #Create a circle
+    wing = Joukowski.joukowski(circle) #Create a wing by transforming the circle
+
+    grid = gridpoints(radius, 3*radius, 10, 35) # Take gridpoints to consider
+    potential = complex_potential(gamma, grid, alpha) # Calculate potential for all points
+    
+    z = complex_centering(x0,y0, grid)#Center the x and y-axis to the cylinder.
+    new_z = z[:-1] ### Making the z list one shorter because you lose 1 point with the approximation method
+    x,y = new_z.real, new_z.imag ### x,y coordinates
+    speed = np.zeros(len(new_z), dtype = np.complex_) ### Empty lists
+
+    for i in range(len(new_z)):
+
+        speed[i] = (potential[i] - potential[i + 1])/(z[i] - z[i + 1])
+        speed[i] = np.conj( speed[i])
+        
+    plt.figure()
+    u,v = speed.real, speed.imag
+    plt.plot(circle.real, circle.imag, color='black')
+    plt.quiver(x,y,u,v)
+    plt.show()
+    
+    new_z = Joukowski.joukowski(new_z) #transform coordinates    
+    wz = Joukowski.joukowski(z) #transform coordinates
+    new_wz = wz[: - 1]
+    wx,wy = new_wz.real, new_wz.imag     
+    wspeed = np.zeros(len(new_wz), dtype = np.complex_)
+
+    
+    for i in range(len(new_wz)):
+        ws = (potential[i] - potential[i + 1])/(wz[i] - wz[i + 1])
+        wspeed[i] = np.conj( ws)
+
+    plt.figure()
+    wu,wv = wspeed.real, wspeed.imag
+    plt.quiver(wx,wy,wu,wv)
+    plt.plot(wing.real, wing.imag, color='black')
+    plt.show()
+    
+
+def pressure_field(x0, y0, radius, gamma, alpha):
+    circle = Joukowski.circle(complex(x0,y0), radius, 1000) #Create a circle
+    wing = Joukowski.joukowski(circle) #Create a wing by transforming the circle
+
+    grid = gridpoints(radius, 3*radius, 400, 400) # Take gridpoints to consider
+    potential = complex_potential(gamma, grid, alpha) # Calculate potential for all points
+    
+    H = 1**2/2  + 101325/1.225 ### Im leaving the gravitational constant out
+
+    z = complex_centering(x0,y0, grid)#Center the x and y-axis to the cylinder.
+    new_z = z[:-1] ### Making the z list one shorter because you lose 1 point with the approximation method
+    x,y = new_z.real, new_z.imag ### x,y coordinates
+    
+    speed = np.zeros(len(new_z), dtype = np.complex_) ### Empty lists
+    pressure = np.zeros(len(speed))
+    
+    for i in range(len(new_z)):
+        speed[i] = (potential[i] - potential[i + 1])/(z[i] - z[i + 1])
+        pressure[i] = (H - (speed[i].imag**2 + speed[i].real**2)/2)*1.225 
+    
+    
+    
+    circle_speed= np.zeros(1000, dtype =np.complex128)
+    e = np.zeros(1000, dtype =np.complex128)
+    for i in range (1000):
+        a = abs(z - circle[i]) 
+        b = min(a) ### Minimal value between the gridpoints and the circle point
+        c = np.where(a == b)[0] ### indexing where that value is
+     
+        d = int(c[0])
+        e[i] = z[d] ### Saving the gridpoints
+        circle_speed[i] = speed[d] ### saving the corresponding pressure
+    
+
+    dz = np.roll(e,-1)/2 - np.roll(e,1)/2 ### Dz value 
+    Fx_min_Fy_circle = 1.225j/2*sum(circle_speed**2 * dz) ## multiplying the pressure with 10 and dz to make it force by multiplying it with the area
+    
+    Fy_circle2 = -Fx_min_Fy_circle.imag
+    Fx_circle2 = Fx_min_Fy_circle.real
+  
+    
+    # plt.figure()
+    # plt.tricontour(x, y, pressure, levels=5000, color='black')
+    # plt.plot(circle.real, circle.imag, color='black')
+    # plt.show()
+    
+    
+    wz = Joukowski.joukowski(z) #transform coordinates
+    new_wz = wz[: - 1]
+    wx,wy = new_wz.real, new_wz.imag 
+    
+    wspeed = np.zeros(len(new_wz), dtype = np.complex128)
+    wpressure = np.zeros(len(speed))
+    
+    for i in range(len(new_wz)):
+        ws = (potential[i] - potential[i + 1])/(wz[i] - wz[i + 1])
+        wspeed[i] = ws
+        wpressure[i] = (H - (wspeed[i].imag**2 + wspeed[i].real**2)/2)*1.225 
+        
+        
+        
+    wing_speed= np.zeros(1000, dtype =np.complex128)
+    e = np.zeros(1000, dtype=np.complex128)
+    for i in range (1000):
+         a = abs(wz - wing[i]) 
+         b = min(a) ### Minimal value between the gridpoints and the circle point
+         c = np.where(a==b)[0] ### indexing where that value is
+         d = int(c[0])
+         e[i] = wz[d] ### Saving the gridpoints
+         wing_speed[i] = wspeed[d] ### saving the corresponding pressure
+     
+    dz = np.roll(e,-1)/2 - np.roll(e,1)/2 ### Dz value 
+    Fx_min_Fy_circle = 1.225j/2*sum(wing_speed**2 * dz) ## multiplying the pressure with 10 and dz to make it force by multiplying it with the area
+     
+    Fy_circle = -Fx_min_Fy_circle.imag
+    Fx_circle = Fx_min_Fy_circle.real
+
+    
+    # plt.figure()
+    # plt.tricontour(wx, wy, wpressure, levels=5000, color='black')
+    # plt.plot(wing.real, wing.imag, color='black')
+    # plt.show()
+    
+    print(' simulation upward lift cylinder',Fy_circle2, 'dragg',Fx_circle2)
+    print(' simulation upward lift wing',Fy_circle, 'dragg', Fx_circle)
+    print('analytical wing', -1.225 * 1 * gamma)
 
 x0 = -0.1
 y0 = 0.22
 radius = 1.12 
-gamma = -4
-alpha = deg2rad(20) #degrees
+gamma = -np.e  ### Makes for a smooth flow at the trailing edge
+alpha = deg2rad(0) #degrees
 
-z, streams, z_trans, trans_streams = extract_streamfunction(x0, y0, radius, gamma, alpha)
-
-
+# z, streams, z_trans, trans_streams = extract_streamfunction(x0, y0, radius, gamma, alpha)
 
 
+pressure_field(x0, y0, radius, gamma, alpha)
+# vel_field(x0, y0, radius, gamma, alpha)
  
-
