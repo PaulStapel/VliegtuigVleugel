@@ -137,7 +137,7 @@ def pressure_field(x0, y0, radius, gamma, alpha):
     circle = Joukowski.circle(complex(x0,y0), radius, 1000) #Create a circle
     wing = Joukowski.joukowski(circle) #Create a wing by transforming the circle
 
-    grid = gridpoints(radius, 3*radius, 200, 200) # Take gridpoints to consider
+    grid = gridpoints(radius, 3*radius, 400, 400) # Take gridpoints to consider
     potential = complex_potential(gamma, grid, alpha) # Calculate potential for all points
     
     H = 1**2/2  + 101325/1.225 ### Im leaving the gravitational constant out
@@ -176,8 +176,8 @@ def pressure_field(x0, y0, radius, gamma, alpha):
     # print(Fy_circle,Fx_circle)
     
     
-    circle_speed= np.zeros(1000)
-    e = np.zeros(1000)
+    circle_speed= np.zeros(1000, dtype =np.complex128)
+    e = np.zeros(1000, dtype =np.complex128)
     for i in range (1000):
         a = abs(z - circle[i]) 
         b = min(a) ### Minimal value between the gridpoints and the circle point
@@ -187,14 +187,13 @@ def pressure_field(x0, y0, radius, gamma, alpha):
         e[i] = z[d] ### Saving the gridpoints
         circle_speed[i] = speed[d] ### saving the corresponding pressure
     
-    dz = np.zeros(1000)
+
     dz = np.roll(e,-1)/2 - np.roll(e,1)/2 ### Dz value 
     Fx_min_Fy_circle = 1.225j/2*sum(circle_speed**2 * dz) ## multiplying the pressure with 10 and dz to make it force by multiplying it with the area
     
     Fy_circle = -Fx_min_Fy_circle.imag
     Fx_circle = Fx_min_Fy_circle.real
-    print(' simulation upward lift cylinder',Fy_circle,Fx_circle)
-    print('analytical wing', -1.225 * 1 * gamma)
+    print(' simulation upward lift cylinder',Fy_circle, 'dragg',Fx_circle)
     
 
     
@@ -209,8 +208,8 @@ def pressure_field(x0, y0, radius, gamma, alpha):
     new_wz = wz[: - 1]
     wx,wy = new_wz.real, new_wz.imag 
     
-    wspeed = np.zeros(len(new_wz), dtype = np.complex_)
-    wpressure = np.zeros(len(speed), dtype = np.complex_)
+    wspeed = np.zeros(len(new_wz), dtype = np.complex128)
+    wpressure = np.zeros(len(speed), dtype = np.complex128)
     
     for i in range(len(new_wz)):
         ws = (potential[i] - potential[i + 1])/(wz[i] - wz[i + 1])
@@ -219,24 +218,22 @@ def pressure_field(x0, y0, radius, gamma, alpha):
         
         
         
-    wing_speed= np.zeros(1000)
-    e = np.zeros(1000)
+    wing_speed= np.zeros(1000, dtype =np.complex128)
+    e = np.zeros(1000, dtype=np.complex128)
     for i in range (1000):
          a = abs(wz - wing[i]) 
          b = min(a) ### Minimal value between the gridpoints and the circle point
-         c = np.where(a == b)[0] ### indexing where that value is
-      
+         c = np.where(a==b)[0] ### indexing where that value is
          d = int(c[0])
          e[i] = wz[d] ### Saving the gridpoints
-         circle_speed[i] = speed[d] ### saving the corresponding pressure
+         wing_speed[i] = wspeed[d] ### saving the corresponding pressure
      
-    dz = np.zeros(1000)
     dz = np.roll(e,-1)/2 - np.roll(e,1)/2 ### Dz value 
-    Fx_min_Fy_circle = 1.225j/2*sum(circle_speed**2 * dz) ## multiplying the pressure with 10 and dz to make it force by multiplying it with the area
+    Fx_min_Fy_circle = 1.225j/2*sum(wing_speed**2 * dz) ## multiplying the pressure with 10 and dz to make it force by multiplying it with the area
      
     Fy_circle = -Fx_min_Fy_circle.imag
     Fx_circle = Fx_min_Fy_circle.real
-    print(' simulation upward lift wing',Fy_circle,Fx_circle)
+    print(' simulation upward lift wing',Fy_circle, 'dragg',Fx_circle)
     print('analytical wing', -1.225 * 1 * gamma)
     
     # plt.figure()
