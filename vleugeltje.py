@@ -155,6 +155,8 @@ def pressure_field(x0, y0, radius, gamma, alpha):
         speed[i] = np.conj( speed[i])
         pressure[i] = (H - (speed[i].imag**2 + speed[i].real**2)/2)*1.225 
     
+    
+    
     circle_pressure= np.zeros(1000)
     e = np.zeros(1000)
     for i in range (1000):
@@ -175,6 +177,7 @@ def pressure_field(x0, y0, radius, gamma, alpha):
     
 
     
+
     plt.figure()
     plt.tricontour(x, y, pressure, levels=5000, color='black')
     plt.plot(circle.real, circle.imag, color='black')
