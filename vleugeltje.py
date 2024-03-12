@@ -166,7 +166,7 @@ def pressure_field(x0, y0, radius, gamma, alpha):
         circle_pressure[i] = pressure[d]
     
     dz = np.zeros(1000)
-    dz = e[-1] + e[1]/2
+    dz = e[-1]/2 + e[1]/2
     Fx_min_Fy_circle = sum(circle_pressure**2 * dz)
 
     
