@@ -16,6 +16,18 @@ def joukowski(circle):
     
     return jk
 
+# circle = (circle(center, R, points))
+
+### Plot for the circle
+
+# plt.plot(circle.real, circle.imag)
+# plt.xlim(-1.5,1.5)  
+# plt.ylim(-1.5,1.5)
+# plt.title(f'Circle in {points} points.')
+# plt.xlabel("Length in m.")
+# plt.ylabel("Length in m.")
+# plt.show()
+
 #Test functies
 # a = (circle(complex(-0.1,0.22), 1.12, 1000))
 # # plt.plot(a.real, a.imag)
