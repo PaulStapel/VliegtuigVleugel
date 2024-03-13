@@ -234,21 +234,23 @@ def pressure_field(gamma, alpha, plot_pressure=False):
         x,y = new_z.real, new_z.imag
         pressure = (H - (u**2 + v**2)/2)*1.225 
         plt.figure()
-        plt.title(f'Pressure around a cylinder for gamma = {gamma}.')
+        plt.title(f'Pressure cylinder, gamma = {gamma}.')
         plt.xlabel("Length in m.")
         plt.ylabel("Length in m.")
         plt.tricontourf(x, y, pressure, levels=500, color='black')
+        plt.colorbar(label = 'pressure')
         plt.plot(circle.real, circle.imag, color='black')
         plt.show()
         
         x_trans,y_trans = new_z_trans.real, new_z_trans.imag
         wpressure = (H - (wu**2 + wv**2)/2)*1.225 
         plt.figure()
-        plt.title(f'Pressure around a wing for gamma = {gamma}.')
+        plt.title(f'Pressure wing, gamma = {gamma}.')
         plt.xlabel("Length in m.")
         plt.ylabel("Length in m.")
-        plt.legend()
         plt.tricontourf(x_trans, y_trans, wpressure, levels=500, color='black')
+        plt.legend()
+        plt.colorbar(label = 'pressure')
         plt.plot(wing.real, wing.imag, color='black')
         plt.show()
     
