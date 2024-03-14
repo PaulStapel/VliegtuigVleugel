@@ -172,6 +172,8 @@ def pressure_field(x0, y0, radius, gamma, alpha):
     
     Fy_circle = -Fx_min_Fy_circle.imag
     Fx_circle = Fx_min_Fy_circle.real
+    
+    print(' simulation upward lift cylinder',Fy_circle, 'dragg',Fx_circle)
   
     
     plt.figure()
@@ -216,14 +218,16 @@ def pressure_field(x0, y0, radius, gamma, alpha):
     plt.plot(wing.real, wing.imag, color='black')
     plt.show()
     
-    print(' simulation upward lift cylinder',Fy_circle, 'dragg',Fx_circle)
+    zoomplotje(wing, wx, wy, new_wz)
+    
+  
     print(' simulation upward lift wing',Fy_circle, 'dragg',Fx_circle)
     print('analytical wing', -1.225 * 1 * gamma)
 
 x0 = -0.1
 y0 = 0.22
 radius = 1.12 
-gamma = -np.e  ### Makes for a smooth flow at the trailing edge
+gamma = -2.47 ### Makes for a smooth flow at the trailing edge
 alpha = deg2rad(0) #degrees
 
 # z, streams, z_trans, trans_streams = extract_streamfunction(x0, y0, radius, gamma, alpha)
@@ -231,4 +235,6 @@ alpha = deg2rad(0) #degrees
 
 pressure_field(x0, y0, radius, gamma, alpha)
 # vel_field(x0, y0, radius, gamma, alpha)
+extract_streamfunction(x0, y0, radius, gamma, alpha)
+
  
